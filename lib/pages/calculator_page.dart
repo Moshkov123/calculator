@@ -39,10 +39,10 @@ class _CalculatorState extends State<Calculator> {
             Wrap(
               children: CalculatorBean.buttonValues
                   .map((value) => SizedBox(
-                        width: value == "CE"
-                            ? screenSize.width / 4
+                        width: value == "RAD/DEG"
+                            ? screenSize.width / 2
                             : value == "0"
-                                ? screenSize.width / 4
+                                ? screenSize.width / 2
                                 : screenSize.width / 4,
                         height: screenSize.width / 5,
                         child: buildButton(value),
@@ -59,7 +59,7 @@ class _CalculatorState extends State<Calculator> {
       padding: const EdgeInsets.all(8.0),
       child: Material(
         clipBehavior: Clip.hardEdge,
-        color: getBtnColor(value),
+        color: getBtnColor(value), // call the function here
         shape: RoundedRectangleBorder(
           side: const BorderSide(color: Colors.transparent),
           borderRadius: BorderRadius.circular(20),
@@ -83,6 +83,9 @@ class _CalculatorState extends State<Calculator> {
     );
   }
   Color getBtnColor(value) {
+    if (value == "RAD/DEG") {
+      return isRadians ? Colors.red : Colors.blue;
+    }
     return [CalculatorBean.del, CalculatorBean.clr].contains(value)
         ? const Color(0xffFFB69F)
         : [

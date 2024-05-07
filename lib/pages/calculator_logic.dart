@@ -1,17 +1,20 @@
 import 'dart:math';
-
+import 'package:flutter/material.dart';
 import 'package:math_expressions/math_expressions.dart';
 bool isRadians = false;
 void handleButtonAction(String value, String text, Function(String) setText){
-
+  if (text == "Error") {
+    setText(""); // Clear the "Error" message before processing the next button press
+    return;
+  }
   switch (value) {
     case "RAD/DEG":
       if (isRadians) {
         isRadians = !isRadians;
-
+        Colors.red;
       } else {
         isRadians = !isRadians;
-        setText(text.replaceAll("deg", "rad"));
+            Colors.blue;
       }
       break;
     case "CE":
@@ -27,17 +30,13 @@ void handleButtonAction(String value, String text, Function(String) setText){
       try {
         String result = evaluate(text);
         if (result.contains('°') && result.contains('\'')) {
-          // Если результат содержит градусы и минуты, выводим его как есть
           setText(result);
         } else {
-          // Если результат не содержит градусы и минуты, преобразуем его в число
           double numberResult = double.parse(result);
           String formattedResult = numberResult.toString();
           if (formattedResult.contains('.')) {
-            // Если есть точка, выводим цифры после нее
             setText(formattedResult);
           } else {
-            // Если нет точки, выводим столько знаков, сколько есть после запятой, но не больше 15
             int decimalPlaces = formattedResult.split('.')[1].length;
             decimalPlaces = min(decimalPlaces, 15);
             setText(numberResult.toStringAsFixed(decimalPlaces));
@@ -75,12 +74,12 @@ void handleButtonAction(String value, String text, Function(String) setText){
       if (text.isNotEmpty && isSymbol(value)) {
         if (isSymbol(text.substring(text.length - 1))) {
           setText(
-              text.substring(0, text.length - 1) + value); // Replace the symbol
+              text.substring(0, text.length - 1) + value);
         } else {
-          setText(text + value); // Add the value of the button to the text
+          setText(text + value);
         }
       } else {
-        setText(text + value); // Add the value of the button to the text
+        setText(text + value);
       }
   }
 }
@@ -90,27 +89,21 @@ bool isSymbol(String value) {
 }
 String evaluate(String expression) {
   expression = expression.replaceAll('x', '*');
+  expression = expression.replaceAll('pi', pi.toString());
 
   Parser p = Parser();
   Expression exp = p.parse(expression);
   ContextModel cm = ContextModel();
   double eval = exp.evaluate(EvaluationType.REAL, cm);
-
   if (isRadians) {
-    // Преобразуем радианы в градусы
     double degrees = eval * (180.0 / pi);
-    // Разделяем градусы на целое и дробное значение
     int deg = degrees.truncate();
     double minutesDouble = (degrees.abs() - deg.abs()) * 60.0;
-    // Разделяем минуты на целое и дробное значение
     int min = minutesDouble.truncate();
     double secondsDouble = (minutesDouble - min) * 60.0;
-
-    // Форматируем результат в виде строки с градусами, минутами и секундами
     String result = '${deg.toString()}° ${min.toString().padLeft(2, '0')}\' ${secondsDouble.toStringAsFixed(2)}\"';
     return result;
   } else {
-    // Если результат уже в градусах, просто возвращаем его
     return eval.toString();
   }
 }
