@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:flutter/material.dart';
+import 'package:calculator/design/widgets/button_values.dart';
 import 'package:math_expressions/math_expressions.dart';
 bool isRadians = false;
 void handleButtonAction(String value, String text, Function(String) setText){
@@ -8,14 +8,13 @@ void handleButtonAction(String value, String text, Function(String) setText){
     return;
   }
   switch (value) {
-    case "RAD/DEG":
-      if (isRadians) {
-        isRadians = !isRadians;
-        Colors.red;
-      } else {
-        isRadians = !isRadians;
-            Colors.blue;
-      }
+    case "Град":
+      isRadians = !isRadians;
+      CalculatorBean.toggleAngleUnitValue();
+      break;
+    case "Рад":
+      isRadians = !isRadians;
+      CalculatorBean.toggleAngleUnitValue();
       break;
     case "CE":
       setText(""); // Clear the entire field

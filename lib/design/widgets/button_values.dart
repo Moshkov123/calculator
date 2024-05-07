@@ -1,3 +1,5 @@
+import 'package:calculator/pages/calculator_logic.dart';
+
 class CalculatorBean {
   static const clr = "CE";
   static const del = "D";
@@ -28,8 +30,8 @@ class CalculatorBean {
   static const arccos = "arccos";
   static const arctan = "arctan";
   static const pi = "π";
-  static const toggleAngleUnit = "RAD/DEG";
-  static const List<String> buttonValues = [
+  static String toggleAngleUnit = "Рад";
+  static List<String> buttonValues = [
     sin,
     cos,
     tan,
@@ -61,4 +63,7 @@ class CalculatorBean {
     dot,
     calculate
   ];
+  static void toggleAngleUnitValue() {
+    toggleAngleUnit = (toggleAngleUnit == "Рад") ? "Град" : "Рад"; // Toggle the value between "Рад" and "Град"
+  }
 }

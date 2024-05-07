@@ -25,11 +25,11 @@ class _CalculatorState extends State<Calculator> {
                 reverse: true,
                 child: Container(
                   alignment: Alignment.bottomRight,
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(12),
                   child: Text(
                     text, // display the characters
                     style: const TextStyle(
-                        fontSize: 48, fontWeight: FontWeight.bold),
+                        fontSize: 34, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.end,
                   ),
                 ),
@@ -39,14 +39,14 @@ class _CalculatorState extends State<Calculator> {
             Wrap(
               children: CalculatorBean.buttonValues
                   .map((value) => SizedBox(
-                        width: value == "RAD/DEG"
-                            ? screenSize.width / 2
-                            : value == "0"
-                                ? screenSize.width / 2
-                                : screenSize.width / 4,
-                        height: screenSize.width / 5,
-                        child: buildButton(value),
-                      ))
+                width: value == "Град" || value == "Рад"
+                    ? screenSize.width / 2
+                    : value == "0"
+                    ? screenSize.width / 2
+                    : screenSize.width / 4,
+                height: screenSize.width / 5,
+                child: buildButton(value),
+              ))
                   .toList(),
             ),
           ],
@@ -56,10 +56,10 @@ class _CalculatorState extends State<Calculator> {
   }
   Widget buildButton(value) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(6.0),
       child: Material(
         clipBehavior: Clip.hardEdge,
-        color: getBtnColor(value), // call the function here
+        color: getBtnColor(value),
         shape: RoundedRectangleBorder(
           side: const BorderSide(color: Colors.transparent),
           borderRadius: BorderRadius.circular(20),
@@ -67,15 +67,20 @@ class _CalculatorState extends State<Calculator> {
         child: InkWell(
           onTap: () {
             setState(() {
-              handleButtonAction(value, text, (String newText) {
-                text = newText;
-              });
+              if (value == "Град" || value == "Рад") {
+                isRadians = !isRadians;
+                isRadians ? "Рад" : "Град";
+              } else {
+                handleButtonAction(value, text, (String newText) {
+                  text = newText;
+                });
+              }
             });
           },
           child: Center(
             child: Text(
               value,
-              style: const TextStyle(fontSize: 24),
+              style: const TextStyle(fontSize: 20),
             ),
           ),
         ),
@@ -83,19 +88,19 @@ class _CalculatorState extends State<Calculator> {
     );
   }
   Color getBtnColor(value) {
-    if (value == "RAD/DEG") {
+    if (value == "Рад" || value == "Град" ) {
       return isRadians ? Colors.red : Colors.blue;
     }
     return [CalculatorBean.del, CalculatorBean.clr].contains(value)
         ? const Color(0xffFFB69F)
         : [
-            CalculatorBean.add,
-            CalculatorBean.multiply,
-            CalculatorBean.subtract,
-            CalculatorBean.divide,
-            CalculatorBean.calculate,
-          ].contains(value)
-            ? const Color(0xffFF9F46)
-            : const Color(0xffffffff);
+      CalculatorBean.add,
+      CalculatorBean.multiply,
+      CalculatorBean.subtract,
+      CalculatorBean.divide,
+      CalculatorBean.calculate,
+    ].contains(value)
+        ? const Color(0xffFF9F46)
+        : const Color(0xffffffff);
   }
 }
