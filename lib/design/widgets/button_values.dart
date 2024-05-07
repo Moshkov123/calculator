@@ -26,12 +26,16 @@ class CalculatorBean {
   static const tan = "tan";
   static const arcsin = "arcsin";
   static const arccos = "arccos";
+  static const arctan = "arctan";
+  static const pi = "π";
+  static const toggleAngleUnit = "RAD/DEG";
   static const List<String> buttonValues = [
     sin,
     cos,
     tan,
     arcsin,
     arccos,
+    arctan,
     clr,
     del,
     openParenthesis,
@@ -51,7 +55,7 @@ class CalculatorBean {
     n2,
     n1,
     add,
-
+    toggleAngleUnit,
     n0,
     dot,
     calculate
