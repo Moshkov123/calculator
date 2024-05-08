@@ -15,7 +15,9 @@ class _CalculatorState extends State<Calculator> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
+    final screenSize = MediaQuery
+        .of(context)
+        .size;
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -38,15 +40,14 @@ class _CalculatorState extends State<Calculator> {
             // кнопки
             Wrap(
               children: CalculatorBean.buttonValues
-                  .map((value) => SizedBox(
-                width: value == "Град" || value == "Рад"
-                    ? screenSize.width / 2
-                    : value == "0"
-                    ? screenSize.width / 2
-                    : screenSize.width / 4,
-                height: screenSize.width / 5,
-                child: buildButton(value),
-              ))
+                  .map((value) =>
+                  SizedBox(
+                    width: value == "0"
+                        ? screenSize.width / 2
+                        : screenSize.width / 4,
+                    height: screenSize.width / 5,
+                    child: buildButton(value),
+                  ))
                   .toList(),
             ),
           ],
@@ -54,6 +55,7 @@ class _CalculatorState extends State<Calculator> {
       ),
     );
   }
+
   Widget buildButton(value) {
     return Padding(
       padding: const EdgeInsets.all(6.0),
@@ -67,9 +69,9 @@ class _CalculatorState extends State<Calculator> {
         child: InkWell(
           onTap: () {
             setState(() {
-              if (value == "Град" || value == "Рад") {
+              if (value == CalculatorBean.toggleAngleUnit) {
                 isRadians = !isRadians;
-                isRadians ? "Рад" : "Град";
+                CalculatorBean.toggleAngleUnitValue();
               } else {
                 handleButtonAction(value, text, (String newText) {
                   text = newText;
@@ -79,16 +81,16 @@ class _CalculatorState extends State<Calculator> {
           },
           child: Center(
             child: Text(
-              value,
+              value == CalculatorBean.toggleAngleUnit ? (isRadians ? 'Град' : 'Рад') : value,// Используем переменную isRadians для определения текста кнопки
               style: const TextStyle(fontSize: 20),
             ),
-          ),
-        ),
+      ),
+    ),
       ),
     );
   }
   Color getBtnColor(value) {
-    if (value == "Рад" || value == "Град" ) {
+    if (value == "Рад" || value == "Град") {
       return isRadians ? Colors.red : Colors.blue;
     }
     return [CalculatorBean.del, CalculatorBean.clr].contains(value)

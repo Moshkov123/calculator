@@ -1,10 +1,13 @@
 import 'dart:math';
 import 'package:calculator/design/widgets/button_values.dart';
 import 'package:math_expressions/math_expressions.dart';
+
 bool isRadians = false;
-void handleButtonAction(String value, String text, Function(String) setText){
+
+void handleButtonAction(String value, String text, Function(String) setText) {
   if (text == "Error") {
-    setText(""); // Clear the "Error" message before processing the next button press
+    setText(
+        ""); // Clear the "Error" message before processing the next button press
     return;
   }
   switch (value) {
@@ -32,17 +35,19 @@ void handleButtonAction(String value, String text, Function(String) setText){
           setText(result);
         } else {
           double numberResult = double.parse(result);
+
           String formattedResult = numberResult.toString();
           if (formattedResult.contains('.')) {
             setText(formattedResult);
           } else {
             int decimalPlaces = formattedResult.split('.')[1].length;
-            decimalPlaces = min(decimalPlaces, 15);
-            setText(numberResult.toStringAsFixed(decimalPlaces));
+
+            setText(numberResult.toStringAsFixed(min(decimalPlaces, 14)));
           }
         }
       } catch (e) {
-        setText("Error"); // Display an error message if the expression is invalid
+        setText(
+            "Error"); // Display an error message if the expression is invalid
       }
       break;
     case "√": // Handle the square root button
@@ -56,6 +61,9 @@ void handleButtonAction(String value, String text, Function(String) setText){
       break;
     case "tan":
       setText(text + "tan(");
+      break;
+    case "ctg":
+      setText(text + "ctg(");
       break;
     case "π":
       setText(text + "pi");
@@ -72,8 +80,7 @@ void handleButtonAction(String value, String text, Function(String) setText){
     default:
       if (text.isNotEmpty && isSymbol(value)) {
         if (isSymbol(text.substring(text.length - 1))) {
-          setText(
-              text.substring(0, text.length - 1) + value);
+          setText(text.substring(0, text.length - 1) + value);
         } else {
           setText(text + value);
         }
@@ -86,23 +93,70 @@ void handleButtonAction(String value, String text, Function(String) setText){
 bool isSymbol(String value) {
   return value == "+" || value == "-" || value == "x" || value == "/";
 }
+
 String evaluate(String expression) {
-  expression = expression.replaceAll('x', '*');
-  expression = expression.replaceAll('pi', pi.toString());
+  expression = replace(expression);
 
   Parser p = Parser();
   Expression exp = p.parse(expression);
   ContextModel cm = ContextModel();
+
   double eval = exp.evaluate(EvaluationType.REAL, cm);
+  eval = checkCtgValue(eval);
+
   if (isRadians) {
-    double degrees = eval * (180.0 / pi);
-    int deg = degrees.truncate();
-    double minutesDouble = (degrees.abs() - deg.abs()) * 60.0;
-    int min = minutesDouble.truncate();
-    double secondsDouble = (minutesDouble - min) * 60.0;
-    String result = '${deg.toString()}° ${min.toString().padLeft(2, '0')}\' ${secondsDouble.toStringAsFixed(2)}\"';
-    return result;
+    if (checkTrigonometricFunctions(expression)) {
+      return convertToDegreesMinutesSeconds(eval);
+    } else if (checkTrigonometric(expression)) {
+      double degrees = eval * ( pi/180);
+      return degrees.truncate().toString();
+    } else {
+      return eval.toString();
+    }
   } else {
     return eval.toString();
   }
+}
+
+bool checkTrigonometric(String expression) {
+  final RegExp regex = RegExp(r'\bsin\b|\bcos\b|\btan\b');
+  return regex.hasMatch(expression);
+}
+
+bool checkTrigonometricFunctions(String expression) {
+  final RegExp regex = RegExp(r'\barcsin\b|\barccos\b|\barctan\b');
+  return regex.hasMatch(expression);
+}
+
+String replace(String expression) {
+  expression = expression.replaceAll('x', '*');
+  expression = expression.replaceAll('pi', pi.toString());
+  expression = expression.replaceAll('ctg', '1/tan');
+  return expression;
+}
+
+double checkCtgValue(double eval) {
+  if (eval.toString().contains('1/tan')) {
+    if (eval < 0.000000000000001) {
+      return 0;
+    } else {
+      String evalStr = eval.toStringAsFixed(10);
+      int firstZeroIndex = evalStr.indexOf('0', evalStr.indexOf('.') + 1);
+      if (firstZeroIndex != -1) {
+        evalStr = evalStr.substring(0, firstZeroIndex);
+      }
+      return double.parse(evalStr);
+    }
+  } else {
+    return eval;
+  }
+}
+
+String convertToDegreesMinutesSeconds(double eval) {
+  double degrees = eval * (180.0 / pi);
+  int deg = degrees.truncate();
+  double minutesDouble = (degrees.abs() - deg.abs()) * 60.0;
+  int min = minutesDouble.truncate();
+  double secondsDouble = (minutesDouble - min) * 60.0;
+  return '${deg.toString()}° ${min.toString().padLeft(2, '0')}\' ${secondsDouble.toStringAsFixed(2)}\"';
 }

@@ -1,4 +1,4 @@
-import 'package:calculator/pages/calculator_logic.dart';
+
 
 class CalculatorBean {
   static const clr = "CE";
@@ -26,15 +26,17 @@ class CalculatorBean {
   static const sin = "sin";
   static const cos = "cos";
   static const tan = "tan";
+  static const ctg = "ctg";
   static const arcsin = "arcsin";
   static const arccos = "arccos";
   static const arctan = "arctan";
   static const pi = "π";
-  static String toggleAngleUnit = "Рад";
+  static String  toggleAngleUnit = "Рад";
   static List<String> buttonValues = [
     sin,
     cos,
     tan,
+    ctg,
     arcsin,
     arccos,
     arctan,
