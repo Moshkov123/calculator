@@ -78,11 +78,7 @@ class _CalculatorState extends State<Calculator> {
           },
           child: Center(
             child: Text(
-              value == CalculatorBean.toggleAngleUnit
-                  ? (isRadians ? 'Град' : 'Рад')
-                  : value,
-              // Используем переменную isRadians для определения текста кнопки
-              style: const TextStyle(fontSize: 20),
+              value == CalculatorBean.toggleAngleUnit ? (isRadians ? "Рад" : "Град") : value,
             ),
           ),
         ),
