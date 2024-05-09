@@ -137,7 +137,6 @@ String replace(String expression) {
   return expression;
 }
 
-
 double checkCtgValue(double eval) {
   if (eval.toString().contains('1/tan')) {
     if (eval < 0.000000000000001) {
