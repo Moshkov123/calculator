@@ -1,7 +1,7 @@
+import 'package:calculator/pages/button_logic.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../design/widgets/button_values.dart';
-import 'calculator_logic.dart'; // Import the logic file
 
 class Calculator extends StatefulWidget {
   const Calculator({Key? key}) : super(key: key);
