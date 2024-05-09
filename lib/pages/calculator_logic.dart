@@ -93,7 +93,6 @@ void handleButtonAction(String value, String text, Function(String) setText) {
 bool isSymbol(String value) {
   return value == "+" || value == "-" || value == "x" || value == "/";
 }
-
 String evaluate(String expression) {
   expression = replace(expression);
 
@@ -107,20 +106,12 @@ String evaluate(String expression) {
   if (isRadians) {
     if (checkTrigonometricFunctions(expression)) {
       return convertToDegreesMinutesSeconds(eval);
-    } else if (checkTrigonometric(expression)) {
-      double degrees = eval * ( pi/180);
-      return degrees.truncate().toString();
     } else {
       return eval.toString();
     }
   } else {
     return eval.toString();
   }
-}
-
-bool checkTrigonometric(String expression) {
-  final RegExp regex = RegExp(r'\bsin\b|\bcos\b|\btan\b');
-  return regex.hasMatch(expression);
 }
 
 bool checkTrigonometricFunctions(String expression) {
@@ -132,8 +123,20 @@ String replace(String expression) {
   expression = expression.replaceAll('x', '*');
   expression = expression.replaceAll('pi', pi.toString());
   expression = expression.replaceAll('ctg', '1/tan');
+  if (isRadians) {
+    expression = expression.replaceAllMapped(RegExp(r'(sin|cos|tan)\(([^)]+)\)'), (match) {
+      String? trigFunction = match.group(1); // sin, cos, or tan
+      double? valueInParentheses = double.tryParse(match.group(2) ?? '');
+      if (trigFunction != null && valueInParentheses != null) {
+        double degreesValue = valueInParentheses * (pi / 180);
+        return '$trigFunction($degreesValue)';
+      }
+      return match.group(0) ?? '';
+    });
+  }
   return expression;
 }
+
 
 double checkCtgValue(double eval) {
   if (eval.toString().contains('1/tan')) {
