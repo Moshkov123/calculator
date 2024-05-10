@@ -66,6 +66,6 @@ class CalculatorBean {
     calculate
   ];
   static void toggleAngleUnitValue() {
-    toggleAngleUnit = (toggleAngleUnit == "Рад") ? "Град" : "Рад"; // Toggle the value between "Рад" and "Град"
+    toggleAngleUnit = (toggleAngleUnit == "Рад") ? "Рад" : "Град"; // Toggle the value between "Рад" and "Град"
   }
 }

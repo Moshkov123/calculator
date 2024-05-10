@@ -24,6 +24,10 @@ String evaluate(String expression) {
     return eval.toString();
   }
 }
+bool checkFunctions(String expression) {
+  final RegExp regex = RegExp(r'\bsin\b|\bcos\b|\btan\b');
+  return regex.hasMatch(expression);
+}
 bool checkTrigonometricFunctions(String expression) {
   final RegExp regex = RegExp(r'\barcsin\b|\barccos\b|\barctan\b');
   return regex.hasMatch(expression);
@@ -31,10 +35,10 @@ bool checkTrigonometricFunctions(String expression) {
 String replace(String expression) {
   expression = expression.replaceAll('x', '*');
   expression = expression.replaceAll('pi', pi.toString());
-  expression = expression.replaceAll('ctg', '1/tan');
-  if (isRadians) {
+
+  if (isRadians && checkFunctions(expression)) {
     expression = expression.replaceAllMapped(RegExp(r'(sin|cos|tan)\(([^)]+)\)'), (match) {
-      String? trigFunction = match.group(1); // sin, cos, or tan
+      String? trigFunction = match.group(1);
       double? valueInParentheses = double.tryParse(match.group(2) ?? '');
       if (trigFunction != null && valueInParentheses != null) {
         double degreesValue = valueInParentheses * (pi / 180);
@@ -43,10 +47,18 @@ String replace(String expression) {
       return match.group(0) ?? '';
     });
   }
+  expression = expression.replaceAllMapped(RegExp(r'ctg\(([^)]+)\)'), (match) {
+    double? valueInParentheses = double.tryParse(match.group(1) ?? '');
+    if (valueInParentheses != null) {
+      double degreesValue = valueInParentheses * (pi / 180);
+      return '1/tan($degreesValue)';
+    }
+    return match.group(0) ?? '';
+  });
   return expression;
 }
 
-double checkCtgValue(double eval) {
+double checkCtgValue(double eval){
   if (eval.toString().contains('1/tan')) {
     if (eval < 0.000000000000001) {
       return 0;
@@ -62,11 +74,11 @@ double checkCtgValue(double eval) {
     return eval;
   }
 }
-String convertToDegreesMinutesSeconds(double eval) {
-  double degrees = eval * (180.0 / pi);
-  int deg = eval.truncate();
-  double minutesDouble = (degrees.abs() - deg.abs()) * 60.0;
-  int min = minutesDouble.truncate();
-  double secondsDouble = (minutesDouble - min) * 60.0;
-  return '${deg.toString()}° ${min.toString().padLeft(2, '0')}\' ${secondsDouble.toStringAsFixed(2)}\"';
+String convertToDegreesMinutesSeconds(double radians) {
+  double degrees = radians * (180 / pi);
+  int deg = degrees.toInt();
+  double minutesDouble = (degrees - deg) * 60;
+  int min = minutesDouble.toInt();
+  double seconds = (minutesDouble - min) * 60;
+  return '${deg}° ${min.toString().padLeft(2, '0')}\' ${seconds.toStringAsFixed(2)}\"';
 }

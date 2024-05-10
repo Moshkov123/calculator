@@ -52,10 +52,9 @@ class _CalculatorState extends State<Calculator> {
       ),
     );
   }
-
   Widget buildButton(value) {
     return Padding(
-      padding: const EdgeInsets.all(6.0),
+      padding: const EdgeInsets.all(5.0),
       child: Material(
         clipBehavior: Clip.hardEdge,
         color: getBtnColor(value),
@@ -78,7 +77,11 @@ class _CalculatorState extends State<Calculator> {
           },
           child: Center(
             child: Text(
-              value == CalculatorBean.toggleAngleUnit ? (isRadians ? "Рад" : "Град") : value,
+              value == CalculatorBean.toggleAngleUnit ? (isRadians ? "Град" : "Рад" ) : value,
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ),
